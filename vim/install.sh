@@ -1,5 +1,5 @@
 CURRENT_DIR=pwd
-VIM_COLORS_DIR=$HOME/.vim/colors/
+VIM_COLORS_DIR=$HOME/.vim/colors
 VUNDLE_DIR=$HOME/.vim/bundle/vundle
 
 mkdir -p $VIM_COLORS_DIR
