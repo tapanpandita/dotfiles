@@ -1,1 +1,2 @@
-sudo pip install ipython requests
+sudo pip install ipython requests virtualenvwrapper
+mkdir $HOME/.virtualenvs
