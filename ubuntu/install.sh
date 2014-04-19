@@ -11,6 +11,6 @@ sudo apt-get install -y\
     libevent-dev\
     libev-dev\
     python-dev\
-    uild-essential\
+    build-essential\
     cmake;
 sudo easy_install pip;
