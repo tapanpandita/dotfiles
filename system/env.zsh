@@ -9,6 +9,10 @@ export ARCHFLAGS='-Wno-error=unused-command-line-argument-hard-error-in-future'
 # docker
 export DOCKER_HOST='tcp://127.0.0.1:4243'
 
+# golang
+export GOROOT=/usr/local/opt/go/libexec
+export GOPATH=$HOME/go
+
 # virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/work

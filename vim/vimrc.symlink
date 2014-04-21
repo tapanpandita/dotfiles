@@ -32,6 +32,7 @@ Plugin 'majutsushi/tagbar'
 Plugin 'pangloss/vim-javascript'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'jimenezrick/vimerl'
+Plugin 'jnwhiteh/vim-golang'
 "Bundle 'myusuf3/numbers.vim'
 "Bundle 'msanders/snipmate.vim'
 
@@ -193,6 +194,9 @@ let g:pymode_rope = 1
 let g:gitgutter_enabled = 0
 "nmap ,vg :ToggleGitGutter<cr>
 
+" Vim tagbar
+nmap <F8> :TagbarToggle<CR>
+
 " Lusty Juggler Shortcuts
 map ,b ,lj
 map ,g ,lg
@@ -203,7 +207,6 @@ map ,g ,lg
 autocmd Filetype lisp setlocal ts=2 sts=2 sw=2
 
 "Go
-au BufRead,BufNewFile *.go set filetype=go
 
 " Javascript
 "autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
