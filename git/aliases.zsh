@@ -1,0 +1,8 @@
+alias gpo='git push origin'
+alias gpu='git pull origin'
+alias gd='git diff'
+alias gc='git commit'
+alias gca='git commit -a'
+alias gco='git checkout'
+alias gdp='git diff @{1}'
+alias gb='git branch'
