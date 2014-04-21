@@ -47,7 +47,7 @@
     editor = vim
 
 [push]
-    default = tracking
+    default = simple
 
 [pull]
     default = current
