@@ -33,6 +33,7 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'jimenezrick/vimerl'
 Plugin 'jnwhiteh/vim-golang'
+Plugin 'pangloss/vim-javascript'
 "Bundle 'myusuf3/numbers.vim'
 "Bundle 'msanders/snipmate.vim'
 
@@ -176,13 +177,24 @@ let g:pymode_rope_complete_on_dot = 0
 "let g:pymode_lint_checker = 'pylint'
 let g:pymode_lint_checker = 'pyflakes'
 let g:pymode_rope = 0
-"let g:pymode_lint = 0
+let g:pymode_lint = 0
 
 " Syntastic options
-"let g:syntastic_mode_map={ 'mode': 'passive' }
-"let g:syntastic_loc_list_height=5
-"autocmd BufWritePost * :Errors
-"autocmd FileWritePost * :Errors
+let g:syntastic_html_tidy_ignore_errors=[' proprietary attribute "ng-']
+" Use pylint and pep8
+let g:syntastic_python_checkers = ['pylint', 'pep8']
+let g:syntastic_python_pylint_args = '--disable=missing-docstring,too-many-ancestors,too-many-public-methods,too-few-public-methods,no-self-use,invalid-name --load-plugins=pylint_django'
+" Use jshint (uses ~/.jshintrc)
+let g:syntastic_javascript_checkers = ['jshint']
+" On by default, turn it off for html
+let g:syntastic_mode_map = { 'mode': 'active',
+    \ 'active_filetypes': [],
+    \ 'passive_filetypes': ['html'] }
+" always stick any detected errors into the loclist
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_loc_list_height=8
+"error window will be automatically opened when errors are detected
+let g:syntastic_auto_loc_list=1
 
 " YCM options
 let g:ycm_autoclose_preview_window_after_completion = 1
