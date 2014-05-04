@@ -63,3 +63,5 @@
     prompt = false
 [branch]
     autosetuprebase = always
+[remote "origin"]
+	push = HEAD
