@@ -62,6 +62,6 @@
 [difftool]
     prompt = false
 [branch]
-    autosetuprebase = always
+    autosetupmerge = always
 [remote "origin"]
 	push = HEAD

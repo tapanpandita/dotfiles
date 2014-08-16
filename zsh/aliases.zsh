@@ -24,3 +24,9 @@ alias asciifu='grep -P "[\x80-\xFF]"'
 alias non_ascii='grep --color="auto" -P -n "[\x80-\xFF]" '
 alias ed='ed -p "ed> "'
 alias emacs='emacs -nw'
+
+# aliases for heroku
+alias push-staging='git push origin develop;git push staging develop:master;heroku run python chaloapi/manage.py migrate --remote staging'
+alias push-production='git push origin master;git push --tags origin;git push heroku master;heroku run python chaloapi/manage.py migrate --remote heroku'
+alias ipython-prod='heroku run python chaloapi/manage.py shell --app chalo-api'
+alias ipython-staging='heroku run python chaloapi/manage.py shell --app chalo-api-dev'
