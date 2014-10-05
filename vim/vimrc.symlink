@@ -215,6 +215,9 @@ map ,g ,lg
 " Clisp
 autocmd Filetype lisp setlocal ts=2 sts=2 sw=2
 
+" Ruby
+autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
+
 "Go
 
 " Javascript
