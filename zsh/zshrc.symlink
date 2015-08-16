@@ -8,7 +8,7 @@ ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="robbyrussell"
 
-plugins=(git django brew)
+plugins=(git django brew celery httpie pip python)
 
 source $ZSH/oh-my-zsh.sh
 #### END OH MY ZSH ####
@@ -41,7 +41,6 @@ fi
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
-eval "$(dvm env)"
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export PATH="$PATH:$HOME/android-sdk-macosx/platform-tools" # Android debugging tools
