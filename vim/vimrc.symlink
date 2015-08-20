@@ -31,7 +31,8 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'jimenezrick/vimerl'
 Plugin 'jnwhiteh/vim-golang'
-Plugin 'Valloric/YouCompleteMe'
+Plugin 'davidhalter/jedi-vim'
+"Plugin 'Valloric/YouCompleteMe'
 Plugin 'ervandew/supertab'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
@@ -183,6 +184,11 @@ let g:pymode_rope = 0
 let g:pymode_lint_ignore = "C0111,R0201"
 "let g:pymode_lint = 0
 
+" Jedi options
+let g:jedi#popup_on_dot = 1
+let g:jedi#popup_select_first = 1
+let g:jedi#use_splits_not_buffers = "right"
+
 " Syntastic options
 "let g:syntastic_html_tidy_ignore_errors=[' proprietary attribute "ng-']
 "" Use pylint and pep8
@@ -207,6 +213,9 @@ let g:pymode_lint_ignore = "C0111,R0201"
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+" Debugging
+"let g:ycm_server_log_level = 'debug'
+"let g:ycm_server_use_vim_stdout = 1
 " make YCM compatible with UltiSnips (using supertab)
 "let g:SuperTabDefaultCompletionType = '<C-n>'
 "nnoremap <leader>jd :YcmCompleter GoTo<CR>

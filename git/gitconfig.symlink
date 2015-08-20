@@ -65,3 +65,7 @@
     autosetupmerge = always
 [remote "origin"]
 	push = HEAD
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
