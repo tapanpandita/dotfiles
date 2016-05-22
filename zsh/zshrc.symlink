@@ -46,3 +46,6 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export PATH="$PATH:$HOME/android-sdk-macosx/platform-tools" # Android debugging tools
 
 export PATH="/usr/local/p/versions/python:$PATH"
+
+# added by travis gem
+[ -f /Users/tapan/.travis/travis.sh ] && source /Users/tapan/.travis/travis.sh

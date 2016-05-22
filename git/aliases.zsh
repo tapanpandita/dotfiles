@@ -1,4 +1,4 @@
-alias gpo='git push origin'
+alias gpo='git push origin; git push --tags'
 alias gpu='git pull origin'
 alias gd='git diff'
 alias gc='git commit'

@@ -26,7 +26,7 @@ alias ed='ed -p "ed> "'
 alias emacs='emacs -nw'
 
 # aliases for heroku
-alias push-staging='git push origin develop;git push staging develop:master;heroku run python chaloapi/manage.py migrate --remote staging'
-alias push-production='git push origin master;git push --tags origin;git push heroku master;heroku run python chaloapi/manage.py migrate --remote heroku'
-alias ipython-prod='heroku run python chaloapi/manage.py shell --app chalo-api'
-alias ipython-staging='heroku run python chaloapi/manage.py shell --app chalo-api-dev'
+alias push-staging='git push origin develop;git push staging develop:master;heroku run python hypertrackapi/manage.py migrate --app hypertrack-api-v2-staging'
+alias push-production='git push origin master;git push --tags origin;git push heroku master;heroku run python hypertrackapi/manage.py migrate --app hypertrack-api-v2-prod'
+alias ipython-prod='heroku run python hypertrackapi/manage.py shell --app hypertrack-api-v2-prod'
+alias ipython-staging='heroku run python hypertrack/manage.py shell --app hypertrack-api-v2-staging'

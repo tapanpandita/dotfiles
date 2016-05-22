@@ -22,7 +22,8 @@ Plugin 'klen/python-mode'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-fugitive'
 Plugin 'sjbach/lusty'
-Plugin 'bling/vim-airline'
+"Plugin 'bling/vim-airline'
+Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plugin 'kien/ctrlp.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-surround'
@@ -36,6 +37,8 @@ Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'gilgigilgil/anderson.vim'
+Plugin 'vim-scripts/keepcase.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -48,8 +51,8 @@ filetype plugin indent on
 let mapleader=","
 let maplocalleader="\\"
 
-" ViM Airline settins
-let g:airline_powerline_fonts=0
+" ViM Airline settings
+let g:airline_powerline_fonts=1
 let g:airline_theme='badwolf'
 
 " Switch syntax highlighting on, when the terminal has colors
