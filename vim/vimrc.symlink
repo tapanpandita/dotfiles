@@ -39,6 +39,8 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'gilgigilgil/anderson.vim'
 Plugin 'vim-scripts/keepcase.vim'
+Plugin 'nikvdp/ejs-syntax'
+Plugin 'dkprice/vim-easygrep'
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -104,6 +106,7 @@ set viminfo='20,\"50
 set hidden        " allow buffers to be hidden
 set laststatus=2 " Always display the statusline in all windows
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+set autoread
 "set mouse=nicr    " mouse scroll in terminal vim
 "nnoremap ; :     " Saves keystrokes
 "set autochdir    " automatically changes directory to file in buffer
