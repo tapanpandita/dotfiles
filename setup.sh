@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+DOTFILES_DIR=`pwd`
+
 ## BREW
 
 # Install command line tools
@@ -21,10 +23,10 @@ brew update
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Link zshrc
-if [ -f "~/.zshrc" ]; then
+if [ -f ~/.zshrc ]; then
     mv ~/.zshrc ~/.zshrc.backup
-    ln -s zshrc.symlink ~/.zshrc
 fi
+ln -s $DOTFILES_DIR/zshrc.symlink ~/.zshrc
 
 
 ## PYTHON
@@ -57,10 +59,10 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # Link init.vim
-if [ -f "~/.config/nvim/init.vim" ]; then
+if [ -f ~/.config/nvim/init.vim ]; then
     mv ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup
-    ln -s init.vim ~/.config/nvim/init.vim
 fi
+ln -s $DOTFILES_DIR/init.vim ~/.config/nvim/init.vim
 
 # Install nvim plugins
 nvim +PlugInstall +qall
@@ -71,6 +73,15 @@ nvim +PlugInstall +qall
 # Install go
 mkdir -p $HOME/go/{bin,src}
 brew install golang
+
+
+## GIT
+
+# Link gitconfig
+if [ -f ~/.gitconfig ]; then
+    mv ~/.gitconfig ~/.gitconfig.backup
+fi
+ln -s $DOTFILES_DIR/gitconfig.symlink ~/.gitconfig
 
 
 ## UTILITIES
