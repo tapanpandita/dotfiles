@@ -1,5 +1,5 @@
 """""""""""""""""""""
-""Tapan's new vimrc""
+""Tapan's neo-vimrc""
 """""""""""""""""""""
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -21,6 +21,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'rafi/awesome-vim-colorschemes'
+Plug 'junegunn/limelight.vim'
+Plug 'junegunn/goyo.vim'
 
 call plug#end()
 
@@ -226,3 +228,7 @@ nnoremap k gk
 
 "Reload vimrc
 nnoremap <leader>sv :source $MYVIMRC<CR>
+
+" Goyo and limelight
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
