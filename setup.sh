@@ -6,15 +6,26 @@ DOTFILES_DIR=`pwd`
 ## BREW
 
 # Install command line tools
-xcode-select --install
-# Accept command line tools license
-sudo xcodebuild -license
+xcode-select -p 1>/dev/null
+if [[ $? != 0 ]] ; then
+    # Install command line tools
+    xcode-select --install
+    # Accept command line tools license
+    sudo xcodebuild -license
+else
+    echo "Command line tools are already installed"
+fi
 
 # Install brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+which -s brew
 
-# Update brew
-brew update
+if [[ $? != 0 ]] ; then
+    # Install Homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    # Update brew
+    brew update
+fi
 
 
 ## ZSH
@@ -52,20 +63,30 @@ brew install neovim
 brew install fzf
 brew install ripgrep
 brew install the_silver_searcher
+#brew install macvim
 pip install neovim pynvim
 
 # Install vim-plug
+# For neovim
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+# For vim
+#curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    #https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # Link init.vim
 if [ -f ~/.config/nvim/init.vim ]; then
     mv ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup
 fi
+#if [ -f ~/.vimrc ]; then
+    #mv ~/.vimrc ~/.vimrc.backup
+#fi
 ln -s $DOTFILES_DIR/init.vim ~/.config/nvim/init.vim
+#ln -s $DOTFILES_DIR/init.vim ~/.vimrc
 
 # Install nvim plugins
 nvim +PlugInstall +qall
+#mvim +PlugInstall +qall
 
 
 ## GOLANG
@@ -84,8 +105,34 @@ fi
 ln -s $DOTFILES_DIR/gitconfig.symlink ~/.gitconfig
 
 
+## TERMINAL
+
+# Install fira code
+brew tap homebrew/cask-fonts
+brew install --cask font-fira-code
+
+
 ## UTILITIES
 
 # Install utilities
 brew install wget
 brew install htop
+
+##TODO
+# Backup and restore keypairs and server pem files
+# SSH Config files
+# Wireguard conf file
+
+# Install the following
+# Fira Code Font
+# Postgres.app
+# iterm 2
+# Chrome
+# Wireguard
+# NordVPN
+# Steam
+# Discord
+# VS Code
+# The Unarchiver
+# VLC
+# MS Office
