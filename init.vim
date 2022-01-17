@@ -148,6 +148,7 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 
 
 " FZF
+command! -bang -nargs=* Agu call fzf#vim#ag(<q-args>, '--path-to-ignore ~/.config/.ignore', {'options': '--delimiter : --nth 4..'}, <bang>0)
 nnoremap <silent> <leader>t :Files<CR>
 nnoremap <silent> <leader>f :Ag<CR>
 
