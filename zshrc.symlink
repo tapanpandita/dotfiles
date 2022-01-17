@@ -141,6 +141,10 @@ alias gdp='git diff @{1}'
 alias gb='git branch'
 alias gcb='git checkout -b'
 
+#history
+setopt inc_append_history # save every command before it is executed
+setopt share_history #retrieve the history file everytime
+
 
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
