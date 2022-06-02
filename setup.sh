@@ -149,8 +149,6 @@ brew install htop
 # Wireguard conf file
 
 # Install the following
-# Fira Code Font
-# Postgres.app
 # iterm 2
 # Chrome
 # Wireguard
@@ -160,4 +158,3 @@ brew install htop
 # VS Code
 # The Unarchiver
 # VLC
-# MS Office
