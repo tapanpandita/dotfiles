@@ -56,6 +56,14 @@ pip install --upgrade pip
 pip install ipython jedi black pylint
 
 
+## LUA
+
+# Install lua
+brew install lua
+brew install luarocks
+brew install lua-language-server
+
+
 ## NEOVIM
 
 # Install neovim stuff
@@ -63,8 +71,9 @@ brew install neovim
 brew install fzf
 brew install ripgrep
 brew install the_silver_searcher
-#brew install macvim
+brew install fd
 pip install neovim pynvim
+npm i -g pyright
 
 # Install vim-plug
 # For neovim
@@ -74,15 +83,31 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 #curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     #https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# Link init.vim
+# Link neovim config
+mkdir -p ~/.config/nvim/lua
+
+# first backup any existing config
 if [ -f ~/.config/nvim/init.vim ]; then
     mv ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup
 fi
-#if [ -f ~/.vimrc ]; then
-    #mv ~/.vimrc ~/.vimrc.backup
-#fi
-ln -s $DOTFILES_DIR/init.vim ~/.config/nvim/init.vim
-#ln -s $DOTFILES_DIR/init.vim ~/.vimrc
+
+if [ -f ~/.config/nvim/lua/config.lua]; then
+    mv ~/.config/nvim/lua/config.lua ~/.config/nvim/lua/config.lua.backup
+fi
+
+if [ -f ~/.config/nvim/lua/lsp_config.lua]; then
+    mv ~/.config/nvim/lua/lsp_config.lua ~/.config/nvim/lua/lsp_config.lua.backup
+fi
+
+if [ -f ~/.config/nvim/lua/cmp_config.lua]; then
+    mv ~/.config/nvim/lua/cmp_config.lua ~/.config/nvim/lua/cmp_config.lua.backup
+fi
+
+# then link all the config files
+ln -s $DOTFILES_DIR/nvim/init.vim ~/.config/nvim/init.vim
+ln -s $DOTFILES_DIR/nvim/lua/config.lua ~/.config/nvim/lua/config.lua
+ln -s $DOTFILES_DIR/nvim/lua/lsp_config.lua ~/.config/nvim/lua/lsp_config.lua
+ln -s $DOTFILES_DIR/nvim/lua/cmp_config.lua ~/.config/nvim/lua/cmp_config.lua
 
 # Install nvim plugins
 nvim +PlugInstall +qall
@@ -109,7 +134,7 @@ ln -s $DOTFILES_DIR/gitconfig.symlink ~/.gitconfig
 
 # Install fira code
 brew tap homebrew/cask-fonts
-brew install --cask font-fira-code
+brew install --cask font-fira-code-nerd-font
 
 
 ## UTILITIES

@@ -3,35 +3,50 @@
 """""""""""""""""""""
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'sbdchd/neoformat'
-Plug 'davidhalter/jedi-vim'
-Plug 'preservim/nerdcommenter'
-Plug 'preservim/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'neomake/neomake'
-Plug 'tmhedberg/SimpylFold'
-Plug 'morhetz/gruvbox'
-Plug 'vim-scripts/xoria256.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-fugitive'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'tpope/vim-rhubarb'
+Plug 'sheerun/vim-polyglot'
+Plug 'preservim/nerdcommenter'
+Plug 'vim-scripts/xoria256.vim'
 Plug 'rafi/awesome-vim-colorschemes'
-Plug 'junegunn/limelight.vim'
-Plug 'junegunn/goyo.vim'
+Plug 'bronson/vim-trailing-whitespace'
+Plug 'folke/trouble.nvim'
 
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-Plug 'zchee/deoplete-jedi'
+" lsp
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" Statusline
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
+
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'honza/vim-snippets'
+
+" Telescope
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+
+" Monzo sugar
+Plug '~/src/github.com/monzo/wearedev/tools/editors/nvim/nvim-monzo'
 
 call plug#end()
+
+
+lua require 'cmp_config'
+lua require 'lsp_config'
+lua require 'config'
+
+
+set completeopt=menu,menuone,noselect
 
 
 " Change the mapleader from \ to ,
@@ -63,9 +78,7 @@ set nobackup      " don't write a backup file
 set ruler         " show the cursor position all the time
 set pastetoggle=<F2>
                   " toggle paste mode
-"set nonumber      " dont show line numbers, for python mode
 set number
-"set wrap          " wrap long lines, for python mode
 set list
 set listchars=tab:>.,trail:.,extends:#,nbsp:.
                   " highlight whitespace
@@ -75,10 +88,6 @@ set hidden        " allow buffers to be hidden
 set laststatus=2 " Always display the statusline in all windows
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 set autoread
-"set mouse=nicr    " mouse scroll in terminal vim
-"nnoremap ; :     " Saves keystrokes
-"set autochdir    " automatically changes directory to file in buffer
-"set mouse=a      " Enable mouse support in console if you are into weird shit
 
 
 "Unhighlight search
@@ -94,67 +103,6 @@ if (has("termguicolors"))
   set termguicolors
 endif
 silent! colorscheme xoria256
-"colorscheme ayu
-
-
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-" Use tab to toggle through autocomplete window
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-call deoplete#custom#option('omni_patterns', {
-\ 'go': '[^. *\t]\.\w*',
-\})
-
-
-" Neoformat
-let g:neoformat_python_black = {
-    \ 'exe': 'black',
-    \ 'stdin': 1,
-    \ 'args': ['-q', '-'],
-    \ }
-let g:neoformat_enabled_python = ['black']
-let g:neoformat_enabled_go = ['gofmt', 'goimports']
-
-augroup fmt
-  autocmd!
-  autocmd BufWritePre * undojoin | Neoformat
-augroup END
-
-
-" Jedi
-" disable autocompletion, because we use deoplete for completion
-let g:jedi#completions_enabled = 0
-
-" open the go-to function in split, not another buffer
-let g:jedi#use_splits_not_buffers = "right"
-
-
-" Neomake
-let g:neomake_python_enabled_makers = ['pylint']
-let g:neomake_go_enabled_makers = ['golint', 'govet', 'errcheck']
-call neomake#configure#automake('nrwi', 500)
-
-
-" Nerdtree
-"nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
-
-" Start NERDTree. If a file is specified, move the cursor to its window.
-"autocmd StdinReadPre * let s:std_in=1
-"autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
-" Exit Vim if NERDTree is the only window left.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-
-
-" FZF
-nnoremap <silent> <leader>t :Files<CR>
-nnoremap <silent> <leader>f :Ag<CR>
-
-
-" ViM Airline settings
-let g:airline_powerline_fonts=1
-let g:airline_theme='badwolf'
 
 
 " Set default file encoding to unicode
@@ -236,6 +184,14 @@ nnoremap k gk
 "Reload vimrc
 nnoremap <leader>sv :source $MYVIMRC<CR>
 
-" Goyo and limelight
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
+
+" Tabs vs Spaces
+autocmd FileType cpp,python,html,javascript,javascript.jsx setlocal tabstop=4 shiftwidth=4 expandtab
+autocmd FileType c,scala,java,ruby setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd FileType go setlocal noexpandtab
+
+
+" Telescope
+" Find files using Telescope command-line sugar.
+nnoremap <leader>t <cmd>Telescope find_files<cr>
+nnoremap <leader>f <cmd>Telescope live_grep<cr>
