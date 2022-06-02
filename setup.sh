@@ -30,14 +30,18 @@ fi
 
 ## ZSH
 
-# Install oh my zsh
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Install pure prompt
+brew install pure
 
 # Link zshrc
 if [ -f ~/.zshrc ]; then
-    mv ~/.zshrc ~/.zshrc.backup
+    # this is in case these is an existing useful zshrc which we want to extend
+    # example: on a work laptop
+    ln -s $DOTFILES_DIR/zshrc.symlink ~/.custom-zshrc.sh
+    echo "source $HOME/.custom-zshrc.sh" >> ~/.zshrc
+else
+    ln -s $DOTFILES_DIR/zshrc.symlink ~/.zshrc
 fi
-ln -s $DOTFILES_DIR/zshrc.symlink ~/.zshrc
 
 
 ## PYTHON
@@ -45,15 +49,15 @@ ln -s $DOTFILES_DIR/zshrc.symlink ~/.zshrc
 # Install python
 brew install pyenv
 brew install zlib
-pyenv install 3.9.1
-pyenv global 3.9.1
+pyenv install 3.10.4
+pyenv global 3.10.4
 
 # Install poetry
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
 # Install python tools
 pip install --upgrade pip
-pip install ipython jedi black pylint
+pip install ipython
 
 
 ## LUA
@@ -69,6 +73,7 @@ brew install lua-language-server
 # Install neovim stuff
 brew install neovim
 brew install fzf
+# run /usr/local/opt/fzf/install to setup keybindings
 brew install ripgrep
 brew install the_silver_searcher
 brew install fd
