@@ -8,7 +8,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'sheerun/vim-polyglot'
 Plug 'preservim/nerdcommenter'
-Plug 'vim-scripts/xoria256.vim'
+Plug 'Mofiqul/vscode.nvim'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'folke/trouble.nvim'
@@ -102,7 +102,7 @@ nmap <f3> :set number! number?<cr>
 if (has("termguicolors"))
   set termguicolors
 endif
-silent! colorscheme xoria256
+silent! colorscheme vscode
 
 
 " Set default file encoding to unicode

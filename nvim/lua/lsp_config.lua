@@ -6,7 +6,11 @@ local trouble = require 'trouble'
 local opts = { noremap = true, silent = true }
 
 -- Setup trouble for prettier diagnostics
-trouble.setup {}
+trouble.setup {
+    auto_open = true,
+    auto_close = true,
+    mode = "document_diagnostics",
+}
 vim.api.nvim_set_keymap("n", "<space>xw", "<cmd>TroubleToggle workspace_diagnostics<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>xd", "<cmd>TroubleToggle document_diagnostics<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>xl", "<cmd>TroubleToggle loclist<CR>", opts)
@@ -72,11 +76,11 @@ local on_attach = function(_, bufnr)
         callback = org_imports,
     })
     -- show diagnostics loclist post save
-    vim.api.nvim_create_autocmd("BufWritePost", {
-        callback = function ()
-            vim.cmd("Trouble document_diagnostics")
-        end
-    })
+    --vim.api.nvim_create_autocmd("BufWritePost", {
+    --callback = function ()
+    --vim.cmd("Trouble document_diagnostics")
+    --end
+    --})
 end
 
 lspconfig.gopls.setup(monzo_lsp.go_config({ on_attach = on_attach, capabilities = capabilities }))
@@ -117,6 +121,6 @@ vim.notify = function(msg, log_level, _)
     if log_level == vim.log.levels.ERROR then
         vim.api.nvim_err_writeln(msg)
     else
-        vim.api.nvim_echo({{msg}}, true, {})
+        vim.api.nvim_echo({ { msg } }, true, {})
     end
 end
