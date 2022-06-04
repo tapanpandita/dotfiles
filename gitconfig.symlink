@@ -1,44 +1,46 @@
 [user]
-    name = Tapan Pandita
-    email = tapan.pandita@gmail.com
+name = Tapan Pandita
+email = tapan.pandita@gmail.com
 
 [core]
-    editor = nvim
+editor = nvim
+pager = nvim -R
 
 
 [color]
-    ui = auto
-    branch = auto
-    diff = auto
-    status = auto
+ui = auto
+branch = auto
+diff = auto
+status = auto
+pager = no
 
 [color "branch"]
-    current = yellow reverse
-    local = yellow
-    remote = green
+current = yellow reverse
+local = yellow
+remote = green
 
 [color "diff"]
-    meta = yellow bold
-    frag = magenta bold
-    old = red bold
-    new = green bold
+meta = yellow bold
+frag = magenta bold
+old = red bold
+new = green bold
 
 [color "status"]
-    added = yellow
-    changed = green
-    untracked = cyan
+added = yellow
+changed = green
+untracked = cyan
 
 [push]
-    default = simple
+default = simple
 
 [pull]
-    default = current
+default = current
 
 [merge]
-    tool = vimdiff
+tool = vimdiff
 
 [diff]
-    tool = vimdiff
+tool = vimdiff
 
 [remote "origin"]
-    push = HEAD
+push = HEAD
