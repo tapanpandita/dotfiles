@@ -1,4 +1,8 @@
-fpath+=/opt/homebrew/share/zsh/site-functions
+# support for homebrew on m1 macs
+if [ -f /opt/homebrew/bin/brew ]; then
+    fpath+=/opt/homebrew/share/zsh/site-functions
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 autoload -U promptinit; promptinit
 prompt pure
