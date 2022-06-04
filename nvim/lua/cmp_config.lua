@@ -1,4 +1,3 @@
-require 'monzo.cmp'
 local cmp = require 'cmp'
 
 local kind_icons = {
@@ -70,8 +69,6 @@ cmp.setup({
     }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'monzo_component', max_item_count = 20 },
-        { name = 'monzo_system', max_item_count = 20 },
         { name = 'ultisnips' }, -- For ultisnips users.
         -- { name = 'vsnip' }, -- For vsnip users.
         -- { name = 'luasnip' }, -- For luasnip users.

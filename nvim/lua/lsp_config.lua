@@ -1,5 +1,4 @@
 local lspconfig = require 'lspconfig'
-local monzo_lsp = require 'monzo.lsp'
 local trouble = require 'trouble'
 
 -- Setup lspconfig.
@@ -83,8 +82,44 @@ local on_attach = function(_, bufnr)
     --})
 end
 
-lspconfig.gopls.setup(monzo_lsp.go_config({ on_attach = on_attach, capabilities = capabilities }))
 lspconfig.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+lspconfig.gopls.setup {
+    cmd = { "gopls", "-remote=auto" },
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        gopls = {
+            analyses = {
+                -- These are the only analyzers that are disabled by default in
+                -- gopls.
+                fieldalignment = true,
+                nilness = true,
+                shadow = true,
+                unusedparams = true,
+                unusedwrite = true,
+            },
+            staticcheck = true,
+            expandWorkspaceToModule = false,
+        },
+    },
+
+    -- Treat anything containing these files as a root directory. This prevents
+    -- us ascending too far toward the root of the repository, which stops us
+    -- from trying to ingest too much code.
+    root_dir = lspconfig.util.root_pattern("go.mod", "main.go", "README.md", "LICENSE"),
+
+    -- Never use wearedev as a root path. It'll grind your machine to a halt.
+    ignoredRootPaths = { "$HOME/src/github.com/monzo/wearedev/" },
+
+    -- Collect less information about packages without open files.
+    memoryMode = "DegradeClosed",
+
+    flags = {
+        -- gopls is a particularly slow language server, especially in wearedev.
+        -- Debounce text changes so that we don't send loads of updates.
+        debounce_text_changes = 150,
+    },
+}
 lspconfig.sumneko_lua.setup {
     cmd = { "lua-language-server" };
     on_attach = on_attach,
