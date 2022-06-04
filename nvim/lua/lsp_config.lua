@@ -6,9 +6,7 @@ local opts = { noremap = true, silent = true }
 
 -- Setup trouble for prettier diagnostics
 trouble.setup {
-    auto_open = true,
-    auto_close = true,
-    mode = "document_diagnostics",
+    mode = "workspace_diagnostics",
 }
 vim.api.nvim_set_keymap("n", "<space>xw", "<cmd>TroubleToggle workspace_diagnostics<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>xd", "<cmd>TroubleToggle document_diagnostics<CR>", opts)
@@ -63,7 +61,6 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    --vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gr', '<cmd>Trouble lsp_references<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
     -- autoformat on save
@@ -75,14 +72,19 @@ local on_attach = function(_, bufnr)
         callback = org_imports,
     })
     -- show diagnostics loclist post save
-    --vim.api.nvim_create_autocmd("BufWritePost", {
-    --callback = function ()
-    --vim.cmd("Trouble document_diagnostics")
-    --end
-    --})
+    vim.api.nvim_create_autocmd("BufWritePost", {
+        callback = function()
+            if #vim.diagnostic.get(0) > 0 then
+                vim.cmd("Trouble workspace_diagnostics")
+            end
+        end
+    })
 end
 
+-- pyright config
 lspconfig.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+
+-- gopls config
 lspconfig.gopls.setup {
     cmd = { "gopls", "-remote=auto" },
     on_attach = on_attach,
@@ -120,6 +122,8 @@ lspconfig.gopls.setup {
         debounce_text_changes = 150,
     },
 }
+
+-- Lua language server config
 lspconfig.sumneko_lua.setup {
     cmd = { "lua-language-server" };
     on_attach = on_attach,
