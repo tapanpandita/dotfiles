@@ -13,3 +13,6 @@ require('lualine').setup({
     },
     extensions = { 'quickfix', 'fugitive' }
 })
+
+-- terminal setup
+require('terminal').setup()

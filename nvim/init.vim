@@ -12,6 +12,7 @@ Plug 'Mofiqul/vscode.nvim'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'folke/trouble.nvim'
+Plug 'norcalli/nvim-terminal.lua'
 
 " lsp
 Plug 'neovim/nvim-lspconfig'
