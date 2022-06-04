@@ -6,6 +6,7 @@ local opts = { noremap = true, silent = true }
 
 -- Setup trouble for prettier diagnostics
 trouble.setup {
+    auto_close = true,
     mode = "workspace_diagnostics",
 }
 vim.api.nvim_set_keymap("n", "<space>xw", "<cmd>TroubleToggle workspace_diagnostics<CR>", opts)
@@ -48,7 +49,7 @@ end
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
     -- Mappings.
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
@@ -64,15 +65,19 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gr', '<cmd>Trouble lsp_references<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
     -- autoformat on save
-    vim.api.nvim_create_autocmd("BufWritePre", {
-        callback = vim.lsp.buf.formatting_sync,
-    })
+    if client.server_capabilities.documentFormattingProvider then
+        vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+            callback = vim.lsp.buf.formatting_sync,
+        })
+    end
     -- auto imports on save
-    vim.api.nvim_create_autocmd("BufWritePre", {
-        callback = org_imports,
-    })
+    if client.server_capabilities.codeActionProvider then
+        vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+            callback = org_imports,
+        })
+    end
     -- show diagnostics loclist post save
-    vim.api.nvim_create_autocmd("BufWritePost", {
+    vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         callback = function()
             if #vim.diagnostic.get(0) > 0 then
                 vim.cmd("Trouble workspace_diagnostics")
@@ -83,6 +88,9 @@ end
 
 -- pyright config
 lspconfig.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+
+-- bashls config
+lspconfig.bashls.setup({ on_attach = on_attach, capabilities = capabilities })
 
 -- gopls config
 lspconfig.gopls.setup {
