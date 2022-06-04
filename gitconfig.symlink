@@ -44,3 +44,6 @@ tool = vimdiff
 
 [remote "origin"]
 push = HEAD
+
+[url "ssh://git@github.com/monzo/"]
+insteadOf = https://github.com/monzo/
