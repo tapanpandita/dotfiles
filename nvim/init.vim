@@ -12,7 +12,7 @@ Plug 'Mofiqul/vscode.nvim'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'folke/trouble.nvim'
-Plug 'norcalli/nvim-terminal.lua'
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 " lsp
 Plug 'neovim/nvim-lspconfig'
@@ -187,6 +187,9 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 autocmd FileType cpp,python,html,javascript,javascript.jsx setlocal tabstop=4 shiftwidth=4 expandtab
 autocmd FileType c,scala,java,ruby setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd FileType go setlocal noexpandtab
+
+" Escape ansi codes for terminal filetypes
+autocmd FileType terminal :AnsiEsc
 
 
 " Telescope

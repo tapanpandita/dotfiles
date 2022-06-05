@@ -56,7 +56,7 @@ setopt SHARE_HISTORY #retrieve the history file everytime
 
 export EDITOR="nvim"
 export VISUAL="nvim"
-export PAGER="nvim -R -c 'set ft=terminal nomod nolist' +0 -"
+export PAGER="nvim -R -c 'set ft=terminal'"
 export MANPAGER="nvim +Man!"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
