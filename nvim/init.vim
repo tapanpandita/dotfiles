@@ -194,5 +194,5 @@ autocmd FileType terminal :AnsiEsc
 
 " Telescope
 " Find files using Telescope command-line sugar.
-nnoremap <leader>t <cmd>Telescope find_files<cr>
-nnoremap <leader>f <cmd>Telescope live_grep<cr>
+nnoremap <leader>t <cmd>Telescope find_files<CR>
+nnoremap <leader>f <cmd>Telescope grep_string search="" only_sort_text=true<CR>
