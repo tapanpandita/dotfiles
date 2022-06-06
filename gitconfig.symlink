@@ -4,8 +4,7 @@ email = tapan.pandita@gmail.com
 
 [core]
 editor = nvim
-pager = nvim -R
-
+pager = nvim -R -c 'set foldlevel=99 nohlsearch'
 
 [color]
 ui = auto

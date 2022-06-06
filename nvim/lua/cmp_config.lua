@@ -65,28 +65,35 @@ cmp.setup({
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Right>'] = cmp.mapping.confirm({ select = false }),
     }),
     sources = cmp.config.sources({
         { name = 'buffer' },
     }, {
         { name = 'nvim_lsp' },
         { name = 'ultisnips' },
-    })
+    }),
+    experimental = {
+        ghost_text = true,
+    }
 })
 
 -- Set configuration for specific filetype.
 cmp.setup.filetype('gitcommit', {
     sources = cmp.config.sources({
-        --{ name = 'cmp_git' }, -- You can specify the `cmp_git` source if you have installed it.
-    }, {
         { name = 'buffer' },
+    }, {
+        --{ name = 'cmp_git' }, -- You can specify the `cmp_git` source if you have installed it.
     })
 })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline('/', {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmp.mapping.preset.cmdline({
+        ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }) },
+        ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }) },
+    }),
     sources = cmp.config.sources({
         { name = 'buffer' }
     })
@@ -94,7 +101,10 @@ cmp.setup.cmdline('/', {
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmp.mapping.preset.cmdline({
+        ['<Down>'] = { c = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }) },
+        ['<Up>'] = { c = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }) },
+    }),
     sources = cmp.config.sources({
         { name = 'cmdline' }
     }, {
