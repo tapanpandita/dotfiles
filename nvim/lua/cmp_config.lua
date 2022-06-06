@@ -69,10 +69,10 @@ cmp.setup({
         ['<Right>'] = cmp.mapping.confirm({ select = false }),
     }),
     sources = cmp.config.sources({
-        { name = 'buffer' },
-    }, {
         { name = 'nvim_lsp' },
         { name = 'ultisnips' },
+    }, {
+        { name = 'buffer' },
     }),
     experimental = {
         ghost_text = true,
