@@ -7,6 +7,8 @@ fi
 autoload -U promptinit; promptinit
 prompt pure
 
+#export LSCOLORS="$(vivid generate molokai)"
+
 if [[ -z $GOPATH ]]; then
     export GOPATH=$HOME/go
     export GOBIN=$GOPATH/bin

@@ -43,6 +43,10 @@ function setup_zsh {
     echo "Installing pure ..."
     brew install pure
 
+    # Install colors for ls - vivid
+    echo "Installing vivid ..."
+    brew install vivid
+
     # Link zshrc
     if [ -f ~/.zshrc ]; then
         # this is in case these is an existing useful zshrc which we want to extend
