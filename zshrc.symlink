@@ -7,7 +7,7 @@ fi
 autoload -U promptinit; promptinit
 prompt pure
 
-#export LSCOLORS="$(vivid generate molokai)"
+export LS_COLORS="$(vivid generate molokai)"
 
 if [[ -z $GOPATH ]]; then
     export GOPATH=$HOME/go
@@ -29,7 +29,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # general alias
-alias ls='ls --color=auto'
+alias ls='gls --color=auto --hyperlink=auto'
 
 # nvim
 alias vim='nvim'

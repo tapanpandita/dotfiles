@@ -43,6 +43,10 @@ function setup_zsh {
     echo "Installing pure ..."
     brew install pure
 
+    # Install core utils for gnu version of shell commands like ls
+    echo "Installing coreutils"
+    brew install coreutils
+
     # Install colors for ls - vivid
     echo "Installing vivid ..."
     brew install vivid
@@ -181,7 +185,15 @@ function setup_terminal {
     if [ -f ~/.config/kitty/kitty.conf ]; then
         mv ~/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf.backup
     fi
-    ln -s "$DOTFILES_DIR/kittyconfig.symlink" ~/.config/kitty/kitty.conf
+    if [ -f ~/.config/kitty/launch-actions.conf ]; then
+        mv ~/.config/kitty/launch-actions.conf ~/.config/kitty/launch-actions.conf.backup
+    fi
+    if [ -f ~/.config/kitty/open-actions.conf ]; then
+        mv ~/.config/kitty/open-actions.conf ~/.config/kitty/open-actions.conf.backup
+    fi
+    ln -s "$DOTFILES_DIR/kitty/kitty.conf" ~/.config/kitty/kitty.conf
+    ln -s "$DOTFILES_DIR/kitty/launch-actions.conf" ~/.config/kitty/launch-actions.conf
+    ln -s "$DOTFILES_DIR/kitty/open-actions.conf" ~/.config/kitty/open-actions.conf
 }
 
 
