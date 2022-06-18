@@ -13,5 +13,4 @@
 --glob=!*.typhon.go
 --glob=!*.validator.go
 --glob=!*.json
---glob=!*.sh
 --glob=!node_modules
