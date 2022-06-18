@@ -1,0 +1,17 @@
+# Searches case insensitively if the pattern is all lowercase. Search case sensitively otherwise.
+--smart-case
+
+# Don't let ripgrep vomit really long lines to my terminal, and show a preview.
+--max-columns=150
+--max-columns-preview
+
+# Exclude auto generated files
+--glob=!*.min.js
+--glob=!*.pb.go
+--glob=!*.proto.desc
+--glob=!*.firehose.go
+--glob=!*.typhon.go
+--glob=!*.validator.go
+--glob=!*.json
+--glob=!*.sh
+--glob=!node_modules

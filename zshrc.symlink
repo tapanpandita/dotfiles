@@ -50,7 +50,7 @@ alias gst='git status'
 alias ga='git add'
 
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude=.git --exclude=.idea --exclude=.vscode --exclude=.sass-cache --exclude=node_modules --exclude=\*.pb.go --exclude=\*.proto.desc"
-export ag='ag . --path-to-ignore ~/.config/.ignore'
+export RIPGREP_CONFIG_PATH="$HOME/.config/.ripgreprc"
 
 # history
 HISTFILE=~/.zsh_history

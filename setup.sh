@@ -51,6 +51,12 @@ function setup_zsh {
     echo "Installing vivid ..."
     brew install vivid
 
+    # Install shell utilities
+    echo "Installing fzf, fd and rg"
+    brew install fzf
+    brew install fd
+    brew install ripgrep
+
     # Link zshrc
     if [ -f ~/.zshrc ]; then
         # this is in case these is an existing useful zshrc which we want to extend
@@ -63,6 +69,14 @@ function setup_zsh {
     else
         echo "Linking zshrc ..."
         ln -s "$DOTFILES_DIR/zshrc.symlink" ~/.zshrc
+    fi
+
+    # Link ripgreprc
+    if [ -f ~/.config/.ripgreprc ]; then
+        mv ~/.config/.ripgreprc ~/.config/.ripgreprc.bck
+    else
+        echo "Linking ripgreprc..."
+        ln -s "$DOTFILES_DIR/ripgreprc.symlink" ~/.config/.ripgreprc
     fi
 }
 
@@ -94,11 +108,6 @@ function install_python {
 function install_neovim_and_dependencies {
     echo "Installing neovim and utilities..."
     brew install neovim
-    brew install fzf
-    echo "Check if fzf keybindings need to be installed!"
-    brew install ripgrep
-    brew install the_silver_searcher
-    brew install fd
     brew install shellcheck
     pip install neovim pynvim
     npm i --location=global pyright
