@@ -32,6 +32,7 @@ function install_homebrew {
         # Install Homebrew
         echo "Installing brew ..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 }
 
@@ -54,27 +55,33 @@ function setup_zsh {
     # Install shell utilities
     echo "Installing fzf, fd, bat and rg"
     brew install fzf fd bat ripgrep
+    # setup fzf completion and keybindings
+    "$(brew --prefix)/opt/fzf/install" --no-bash --completion --key-bindings --no-update-rc
 
     # Link zshrc
-    if [ -f ~/.zshrc ]; then
-        # this is in case these is an existing useful zshrc which we want to extend
-        # example: on a work laptop
-        echo "Linking custom zshrc ..."
-        if ! [ -L ~/.custom-zshrc.sh ]; then
-            ln -s "$DOTFILES_DIR/zshrc.symlink" ~/.custom-zshrc.sh
-            echo "source $HOME/.custom-zshrc.sh" >> ~/.zshrc
-        fi
-    else
-        echo "Linking zshrc ..."
-        ln -s "$DOTFILES_DIR/zshrc.symlink" ~/.zshrc
+    # this is in case these is an existing useful zshrc which we want to extend
+    # example: on a work laptop
+    if ! [ -f "$HOME/.zshrc" ]; then
+        # We always want to use the custom zshrc pattern so make a dummy zshrc
+        echo "Creating dummy zshrc ..."
+        touch "$HOME/.zshrc"
+    fi
+
+    if ! [ -L "$HOME/.custom-zshrc.sh" ]; then
+        ln -s "$DOTFILES_DIR/zshrc.symlink" "$HOME/.custom-zshrc.sh"
+    fi
+
+    if ! grep -q "source $HOME/.custom-zshrc.sh" "$HOME/.zshrc"; then
+        echo "source $HOME/.custom-zshrc.sh" >> "$HOME/.zshrc"
     fi
 
     # Link ripgreprc
-    if [ -f ~/.config/.ripgreprc ]; then
-        mv ~/.config/.ripgreprc ~/.config/.ripgreprc.bck
+    mkdir -p "$HOME/.config"
+    if [ -f "$HOME/.config/.ripgreprc" ]; then
+        mv "$HOME/.config/.ripgreprc" "$HOME/.config/.ripgreprc.bck"
     else
         echo "Linking ripgreprc..."
-        ln -s "$DOTFILES_DIR/ripgreprc.symlink" ~/.config/.ripgreprc
+        ln -s "$DOTFILES_DIR/ripgreprc.symlink" "$HOME/.config/.ripgreprc"
     fi
 }
 
@@ -86,6 +93,9 @@ function install_python {
     echo "Installing python ..."
     brew install pyenv
     brew install zlib
+    export PYENV_ROOT=$HOME/.pyenv
+    export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+    eval "$(pyenv init --path)"
     pyenv install 3.10.4
     pyenv global 3.10.4
 
@@ -97,6 +107,17 @@ function install_python {
     echo "Installing python tools ..."
     pip install --upgrade pip
     pip install ipython
+}
+
+## NODE
+
+function install_node {
+    # Install nvm
+    echo "Installing nvm"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    # Install node and npm
+    nvm install node
+    nvm use node
 }
 
 
@@ -123,30 +144,30 @@ function setup_neovim {
 
     # Link neovim config
     echo "linking neovim config ..."
-    mkdir -p ~/.config/nvim/lua
+    mkdir -p "$HOME/.config/nvim/lua"
 
     # first backup any existing config
-    if [ -f ~/.config/nvim/init.vim ]; then
-        mv ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup
+    if [ -f "$HOME/.config/nvim/init.vim" ]; then
+        mv "$HOME/.config/nvim/init.vim" "$HOME/.config/nvim/init.vim.backup"
     fi
 
-    if [ -f ~/.config/nvim/lua/config.lua ]; then
-        mv ~/.config/nvim/lua/config.lua ~/.config/nvim/lua/config.lua.backup
+    if [ -f "$HOME/.config/nvim/lua/config.lua" ]; then
+        mv "$HOME/.config/nvim/lua/config.lua" "$HOME/.config/nvim/lua/config.lua.backup"
     fi
 
-    if [ -f ~/.config/nvim/lua/lsp_config.lua ]; then
-        mv ~/.config/nvim/lua/lsp_config.lua ~/.config/nvim/lua/lsp_config.lua.backup
+    if [ -f "$HOME/.config/nvim/lua/lsp_config.lua" ]; then
+        mv "$HOME/.config/nvim/lua/lsp_config.lua" "$HOME/.config/nvim/lua/lsp_config.lua.backup"
     fi
 
-    if [ -f ~/.config/nvim/lua/cmp_config.lua ]; then
-        mv ~/.config/nvim/lua/cmp_config.lua ~/.config/nvim/lua/cmp_config.lua.backup
+    if [ -f "$HOME/.config/nvim/lua/cmp_config.lua" ]; then
+        mv "$HOME/.config/nvim/lua/cmp_config.lua" "$HOME/.config/nvim/lua/cmp_config.lua.backup"
     fi
 
     # then link all the config files
-    ln -s "$DOTFILES_DIR/nvim/init.vim" ~/.config/nvim/init.vim
-    ln -s "$DOTFILES_DIR/nvim/lua/config.lua" ~/.config/nvim/lua/config.lua
-    ln -s "$DOTFILES_DIR/nvim/lua/lsp_config.lua" ~/.config/nvim/lua/lsp_config.lua
-    ln -s "$DOTFILES_DIR/nvim/lua/cmp_config.lua" ~/.config/nvim/lua/cmp_config.lua
+    ln -s "$DOTFILES_DIR/nvim/init.vim" "$HOME/.config/nvim/init.vim"
+    ln -s "$DOTFILES_DIR/nvim/lua/config.lua" "$HOME/.config/nvim/lua/config.lua"
+    ln -s "$DOTFILES_DIR/nvim/lua/lsp_config.lua" "$HOME/.config/nvim/lua/lsp_config.lua"
+    ln -s "$DOTFILES_DIR/nvim/lua/cmp_config.lua" "$HOME/.config/nvim/lua/cmp_config.lua"
 
     # Install nvim plugins
     echo "Installing neovim plugins ..."
@@ -169,10 +190,10 @@ function install_golang {
 # Link gitconfig
 function setup_gitconfig {
     echo "Setting up git ..."
-    if [ -f ~/.gitconfig ]; then
-        mv ~/.gitconfig ~/.gitconfig.backup
+    if [ -f "$HOME/.gitconfig" ]; then
+        mv "$HOME/.gitconfig" "$HOME/.gitconfig.backup"
     fi
-    ln -s "$DOTFILES_DIR/gitconfig.symlink" ~/.gitconfig
+    ln -s "$DOTFILES_DIR/gitconfig.symlink" "$HOME/.gitconfig"
 }
 
 
@@ -185,22 +206,22 @@ function setup_terminal {
     brew install --cask font-fira-code-nerd-font
 
     # Install kitty
-    mkdir -p ~/.config/kitty/
+    mkdir -p "$HOME/.config/kitty/"
     echo "Installing kitty ..."
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
     echo "Setting up kitty ..."
-    if [ -f ~/.config/kitty/kitty.conf ]; then
-        mv ~/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf.backup
+    if [ -f "$HOME/.config/kitty/kitty.conf" ]; then
+        mv "$HOME/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf.backup"
     fi
-    if [ -f ~/.config/kitty/launch-actions.conf ]; then
-        mv ~/.config/kitty/launch-actions.conf ~/.config/kitty/launch-actions.conf.backup
+    if [ -f "$HOME/.config/kitty/launch-actions.conf" ]; then
+        mv "$HOME/.config/kitty/launch-actions.conf" "$HOME/.config/kitty/launch-actions.conf.backup"
     fi
-    if [ -f ~/.config/kitty/open-actions.conf ]; then
-        mv ~/.config/kitty/open-actions.conf ~/.config/kitty/open-actions.conf.backup
+    if [ -f "$HOME/.config/kitty/open-actions.conf" ]; then
+        mv "$HOME/.config/kitty/open-actions.conf" "$HOME/.config/kitty/open-actions.conf.backup"
     fi
-    ln -s "$DOTFILES_DIR/kitty/kitty.conf" ~/.config/kitty/kitty.conf
-    ln -s "$DOTFILES_DIR/kitty/launch-actions.conf" ~/.config/kitty/launch-actions.conf
-    ln -s "$DOTFILES_DIR/kitty/open-actions.conf" ~/.config/kitty/open-actions.conf
+    ln -s "$DOTFILES_DIR/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+    ln -s "$DOTFILES_DIR/kitty/launch-actions.conf" "$HOME/.config/kitty/launch-actions.conf"
+    ln -s "$DOTFILES_DIR/kitty/open-actions.conf" "$HOME/.config/kitty/open-actions.conf"
 }
 
 
@@ -211,7 +232,9 @@ function install_utilities {
     echo "Installing utilities ..."
     brew install wget
     brew install htop
+    brew install --cask rectangle
     brew install --cask the-unarchiver
+    brew install --cask stats
     brew install --cask visual-studio-code
 }
 
@@ -248,6 +271,7 @@ if [ $all_except_personal = "true" ]; then
     install_homebrew
     setup_zsh
     install_python
+    install_node
     install_neovim_and_dependencies
     setup_neovim
     install_golang
