@@ -15,6 +15,32 @@ vim.api.nvim_set_keymap("n", "<space>xl", "<cmd>TroubleToggle loclist<CR>", opts
 vim.api.nvim_set_keymap("n", "<space>xq", "<cmd>TroubleToggle quickfix<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>gr", "<cmd>Trouble lsp_references<CR>", opts)
 
+-- Setup treesitter
+require 'nvim-treesitter.configs'.setup {
+    -- A list of parser names, or "all"
+    ensure_installed = { "go", "python", "lua", "bash", "css", "dockerfile", "gomod", "graphql", "html", "javascript", "proto", "typescript", "vim", "yaml" },
+    highlight = {
+        enable = true,
+        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+        -- Instead of true it can also be a list of languages
+        additional_vim_regex_highlighting = false,
+    },
+    incremental_selection = {
+        enable = true,
+        keymaps = {
+            init_selection = "gnn",
+            node_incremental = "grn",
+            scope_incremental = "grc",
+            node_decremental = "grm",
+        },
+    },
+    indent = {
+        enable = true
+    }
+}
+
 -- autocompletion
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
