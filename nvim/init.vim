@@ -13,6 +13,7 @@ Plug 'rafi/awesome-vim-colorschemes'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'folke/trouble.nvim'
 Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " lsp
 Plug 'neovim/nvim-lspconfig'

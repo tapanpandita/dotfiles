@@ -52,10 +52,8 @@ function setup_zsh {
     brew install vivid
 
     # Install shell utilities
-    echo "Installing fzf, fd and rg"
-    brew install fzf
-    brew install fd
-    brew install ripgrep
+    echo "Installing fzf, fd, bat and rg"
+    brew install fzf fd bat ripgrep
 
     # Link zshrc
     if [ -f ~/.zshrc ]; then

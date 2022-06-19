@@ -28,8 +28,11 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# general alias
+# general aliases
 alias ls='gls --color=auto --hyperlink=auto'
+alias bat='bat --paging=never'
+alias cat='bat'
+#alias fzf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
 
 # nvim
 alias vim='nvim'
