@@ -5,6 +5,8 @@ email = tapan.pandita@gmail.com
 [core]
 editor = nvim
 pager = nvim -R -c 'set foldlevel=99 nohlsearch'
+	untrackedcache = true
+	fsmonitor = true
 
 [color]
 ui = auto

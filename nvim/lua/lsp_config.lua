@@ -106,7 +106,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         callback = function()
             if #vim.diagnostic.get(0) > 0 then
-                vim.cmd("Trouble workspace_diagnostics")
+                vim.cmd("Trouble document_diagnostics")
             end
         end
     })

@@ -31,8 +31,8 @@ export NVM_DIR="$HOME/.nvm"
 # general aliases
 alias ls='gls --color=auto --hyperlink=auto'
 alias bat='bat --paging=never'
-alias cat='bat'
-#alias fzf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
+#alias cat='bat'
+alias fzf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}"'
 
 # nvim
 alias vim='nvim'
