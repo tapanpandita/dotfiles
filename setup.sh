@@ -236,6 +236,7 @@ function install_utilities {
     brew install --cask the-unarchiver
     brew install --cask stats
     brew install --cask visual-studio-code
+    brew install --cask monitorcontrol
 }
 
 # Only install on personal laptop
