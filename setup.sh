@@ -247,6 +247,7 @@ function install_personal_utilities {
     brew install --cask epic-games
     brew install --cask google-chrome
     brew install --cask nordvpn
+    brew install --cask monitorcontrol
 }
 
 all_except_personal=''
