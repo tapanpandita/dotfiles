@@ -236,6 +236,7 @@ function install_utilities {
     brew install --cask the-unarchiver
     brew install --cask stats
     brew install --cask visual-studio-code
+    brew install --cask monitorcontrol
 }
 
 # Only install on personal laptop
@@ -247,7 +248,6 @@ function install_personal_utilities {
     brew install --cask epic-games
     brew install --cask google-chrome
     brew install --cask nordvpn
-    brew install --cask monitorcontrol
 }
 
 all_except_personal=''
