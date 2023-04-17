@@ -9,10 +9,10 @@ prompt pure
 
 export LS_COLORS="$(vivid generate molokai)"
 
-if [[ -z $GOPATH ]]; then
-    export GOPATH=$HOME/go
-    export GOBIN=$GOPATH/bin
-fi
+#if [[ -z $GOPATH ]]; then
+    #export GOPATH=$HOME/go
+    #export GOBIN=$GOPATH/bin
+#fi
 
 export PYENV_ROOT=$HOME/.pyenv
 export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH

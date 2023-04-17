@@ -272,10 +272,10 @@ if [ $all_except_personal = "true" ]; then
     install_homebrew
     setup_zsh
     install_python
-    install_node
+    #install_node
     install_neovim_and_dependencies
     setup_neovim
-    install_golang
+    #install_golang
     setup_gitconfig
     setup_terminal
     install_utilities
