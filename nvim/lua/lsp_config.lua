@@ -60,7 +60,6 @@ vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<C
 local function org_imports()
     local clients = vim.lsp.buf_get_clients()
     for _, client in pairs(clients) do
-
         local params = vim.lsp.util.make_range_params(nil, client.offset_encoding)
         params.context = { only = { "source.organizeImports" } }
 
@@ -94,21 +93,23 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gr', '<cmd>Telescope lsp_references<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
     -- autoformat on save
     if client.server_capabilities.documentFormattingProvider then
-        vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-            callback = vim.lsp.buf.formatting_sync,
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            callback = function()
+                vim.lsp.buf.format()
+            end
         })
     end
     -- auto imports on save
     if client.server_capabilities.codeActionProvider then
-        vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+        vim.api.nvim_create_autocmd("BufWritePre", {
             callback = org_imports,
         })
     end
     -- show diagnostics loclist post save
-    vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+    vim.api.nvim_create_autocmd("BufWritePost", {
         callback = function()
             if #vim.diagnostic.get(0) > 0 then
                 vim.cmd("Trouble document_diagnostics")
@@ -164,7 +165,7 @@ lspconfig.gopls.setup {
 
 -- Lua language server config
 lspconfig.lua_ls.setup {
-    cmd = { "lua-language-server" };
+    cmd = { "lua-language-server" },
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
