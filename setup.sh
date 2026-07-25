@@ -169,6 +169,10 @@ function setup_neovim {
     ln -s "$DOTFILES_DIR/nvim/lua/lsp_config.lua" "$HOME/.config/nvim/lua/lsp_config.lua"
     ln -s "$DOTFILES_DIR/nvim/lua/cmp_config.lua" "$HOME/.config/nvim/lua/cmp_config.lua"
 
+    # Link headless maintenance scripts
+    mkdir -p "$HOME/.config/nvim/scripts"
+    ln -s "$DOTFILES_DIR/nvim/scripts/mason_update.lua" "$HOME/.config/nvim/scripts/mason_update.lua"
+
     # Install nvim plugins
     echo "Installing neovim plugins ..."
     nvim +PlugInstall +qall
@@ -250,6 +254,16 @@ function install_personal_utilities {
     brew install --cask nordvpn
 }
 
+## BIN
+
+# Link maintenance scripts onto PATH
+function setup_bin {
+    echo "Linking bin scripts ..."
+    mkdir -p "$HOME/bin"
+    ln -s "$DOTFILES_DIR/bin/dev-update" "$HOME/bin/dev-update"
+}
+
+
 all_except_personal=''
 personal=''
 
@@ -275,6 +289,7 @@ if [ $all_except_personal = "true" ]; then
     #install_node
     install_neovim_and_dependencies
     setup_neovim
+    setup_bin
     #install_golang
     setup_gitconfig
     setup_terminal
