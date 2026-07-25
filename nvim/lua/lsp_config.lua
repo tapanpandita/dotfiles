@@ -91,6 +91,25 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function(args) go_org_imports(args.buf) end,
 })
 
+-- ESLint: apply autofixes (import order, unused vars, etc.) on save. Runs
+-- alongside conform/Prettier below; with eslint-config-prettier the two don't
+-- overlap (ESLint owns lint fixes, Prettier owns formatting).
+local function eslint_fix_all(bufnr)
+    local clients = vim.lsp.get_clients({ bufnr = bufnr, name = "eslint" })
+    if #clients == 0 then return end
+    local enc = clients[1].offset_encoding or "utf-16"
+    local params = vim.lsp.util.make_range_params(0, enc)
+    params.context = { only = { "source.fixAll.eslint" }, diagnostics = {} }
+    local result = vim.lsp.buf_request_sync(bufnr, "textDocument/codeAction", params, 3000)
+    for _, res in pairs(result or {}) do
+        for _, r in pairs(res.result or {}) do
+            if r.edit then
+                vim.lsp.util.apply_workspace_edit(r.edit, enc)
+            end
+        end
+    end
+end
+
 -- Show diagnostics list after save if there are any
 vim.api.nvim_create_autocmd("BufWritePost", {
     callback = function()
@@ -137,11 +156,21 @@ vim.api.nvim_create_autocmd("LspAttach", {
         if client and client.name == 'ruff' then
             client.server_capabilities.hoverProvider = false
         end
+
+        -- ESLint: fix-all on save for this buffer
+        if client and client.name == 'eslint' then
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                buffer = bufnr,
+                callback = function() eslint_fix_all(bufnr) end,
+            })
+        end
     end,
 })
 
 -- Formatting: conform runs Prettier / ruff where configured, falls back to the
 -- LSP formatter (e.g. gopls, lua_ls) otherwise. Format on save.
+-- Prettier picks up each project's own .prettierrc / .editorconfig; there's no
+-- global config, so formatting always matches whatever the repo defines.
 require('conform').setup({
     format_on_save = { lsp_format = 'fallback', timeout_ms = 2000 },
     formatters_by_ft = {
