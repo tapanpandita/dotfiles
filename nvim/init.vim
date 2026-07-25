@@ -76,8 +76,6 @@ set wildignore=*.swp,*.bak,*.pyc,*.class,*\/migrations\/*
 set title         " change the terminal's title
 set nobackup      " don't write a backup file
 set ruler         " show the cursor position all the time
-set pastetoggle=<F2>
-                  " toggle paste mode
 set number
 set list
 set listchars=tab:>.,trail:.,extends:#,nbsp:.
