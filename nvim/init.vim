@@ -24,6 +24,10 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
+" Formatting + JSON/YAML schemas
+Plug 'stevearc/conform.nvim'
+Plug 'b0o/schemastore.nvim'
+
 " Statusline
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -132,6 +136,7 @@ nnoremap td  :tabclose<CR>
 if $TMUX == ''
     set clipboard+=unnamed
 endif
+nnoremap <M-c> "+y
 
 
 " Window shortcuts

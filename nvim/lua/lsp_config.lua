@@ -1,31 +1,26 @@
-local lspconfig = require 'lspconfig'
 local trouble = require 'trouble'
+local schemastore = require 'schemastore'
 
--- Setup lspconfig.
 local opts = { noremap = true, silent = true }
 
--- Setup trouble for prettier diagnostics
+-- Trouble: prettier diagnostics
 trouble.setup {
     auto_close = true,
     mode = "workspace_diagnostics",
 }
-vim.api.nvim_set_keymap("n", "<space>xw", "<cmd>TroubleToggle workspace_diagnostics<CR>", opts)
-vim.api.nvim_set_keymap("n", "<space>xd", "<cmd>TroubleToggle document_diagnostics<CR>", opts)
-vim.api.nvim_set_keymap("n", "<space>xl", "<cmd>TroubleToggle loclist<CR>", opts)
-vim.api.nvim_set_keymap("n", "<space>xq", "<cmd>TroubleToggle quickfix<CR>", opts)
-vim.api.nvim_set_keymap("n", "<space>gr", "<cmd>Trouble lsp_references<CR>", opts)
+vim.keymap.set("n", "<space>xw", "<cmd>TroubleToggle workspace_diagnostics<CR>", opts)
+vim.keymap.set("n", "<space>xd", "<cmd>TroubleToggle document_diagnostics<CR>", opts)
+vim.keymap.set("n", "<space>xl", "<cmd>TroubleToggle loclist<CR>", opts)
+vim.keymap.set("n", "<space>xq", "<cmd>TroubleToggle quickfix<CR>", opts)
+vim.keymap.set("n", "<space>gr", "<cmd>Trouble lsp_references<CR>", opts)
 
--- Setup treesitter
+-- Treesitter
 require 'nvim-treesitter.configs'.setup {
-    -- A list of parser names, or "all"
-    ensure_installed = { "go", "python", "lua", "bash", "css", "dockerfile", "gomod", "graphql", "html", "javascript",
-        "proto", "typescript", "vim", "yaml" },
+    ensure_installed = { "go", "gomod", "python", "lua", "bash", "css", "dockerfile", "graphql",
+        "html", "javascript", "typescript", "tsx", "json", "jsonc", "yaml", "proto",
+        "markdown", "markdown_inline", "vim" },
     highlight = {
         enable = true,
-        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-        -- Using this option may slow down your editor, and you may see some duplicate highlights.
-        -- Instead of true it can also be a list of languages
         additional_vim_regex_highlighting = false,
     },
     incremental_selection = {
@@ -42,98 +37,147 @@ require 'nvim-treesitter.configs'.setup {
     }
 }
 
--- Setup mason
+-- Mason (prepends installed servers/tools to PATH)
 require("mason").setup()
 
--- autocompletion
-local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+-- Diagnostics UI
+vim.diagnostic.config({
+    severity_sort = true,
+    underline = true,
+    update_in_insert = false,
+    virtual_text = { spacing = 2, prefix = "●" },
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN]  = "",
+            [vim.diagnostic.severity.INFO]  = "",
+            [vim.diagnostic.severity.HINT]  = "",
+        },
+    },
+    float = { border = "rounded", source = true },
+})
 
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
---vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+-- Rounded borders on all floating windows (hover, signature help, etc.)
+vim.o.winborder = "rounded"
 
--- function to automatically organize imports
-local function org_imports()
-    local clients = vim.lsp.buf_get_clients()
-    for _, client in pairs(clients) do
-        local params = vim.lsp.util.make_range_params(nil, client.offset_encoding)
-        params.context = { only = { "source.organizeImports" } }
+-- Diagnostic navigation (global)
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, opts)
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, opts)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
-        local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 10000)
-        for _, res in pairs(result or {}) do
-            for _, r in pairs(res.result or {}) do
-                if r.edit then
-                    vim.lsp.util.apply_workspace_edit(r.edit, client.offset_encoding)
-                else
-                    vim.lsp.buf.execute_command(r.command)
-                end
+-- Completion capabilities shared by all servers
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- Go: organize imports on save (kept from previous config, modernised)
+local function go_org_imports(bufnr)
+    local clients = vim.lsp.get_clients({ bufnr = bufnr, name = "gopls" })
+    if #clients == 0 then return end
+    local enc = clients[1].offset_encoding or "utf-16"
+    local params = vim.lsp.util.make_range_params(0, enc)
+    params.context = { only = { "source.organizeImports" } }
+    local result = vim.lsp.buf_request_sync(bufnr, "textDocument/codeAction", params, 3000)
+    for _, res in pairs(result or {}) do
+        for _, r in pairs(res.result or {}) do
+            if r.edit then
+                vim.lsp.util.apply_workspace_edit(r.edit, enc)
             end
         end
     end
 end
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-    -- Mappings.
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl',
-        '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-\\>', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>gr', '<cmd>Telescope lsp_references<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
-    -- autoformat on save
-    if client.server_capabilities.documentFormattingProvider then
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            callback = function()
-                vim.lsp.buf.format()
-            end
-        })
-    end
-    -- auto imports on save
-    if client.server_capabilities.codeActionProvider then
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            callback = org_imports,
-        })
-    end
-    -- show diagnostics loclist post save
-    vim.api.nvim_create_autocmd("BufWritePost", {
-        callback = function()
-            if #vim.diagnostic.get(0) > 0 then
-                vim.cmd("Trouble document_diagnostics")
-            end
+vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = "*.go",
+    callback = function(args) go_org_imports(args.buf) end,
+})
+
+-- Show diagnostics list after save if there are any
+vim.api.nvim_create_autocmd("BufWritePost", {
+    callback = function()
+        if #vim.diagnostic.get(0) > 0 then
+            pcall(vim.cmd, "Trouble document_diagnostics")
         end
-    })
-end
+    end,
+})
 
--- pyright config
-lspconfig.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+-- Per-buffer keymaps and tweaks when a server attaches
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local bufnr = args.buf
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        local bopts = { noremap = true, silent = true, buffer = bufnr }
 
--- bashls config
-lspconfig.bashls.setup({ on_attach = on_attach, capabilities = capabilities })
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bopts)
+        vim.keymap.set('n', '<C-]>', vim.lsp.buf.definition, bopts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, bopts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bopts)
+        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bopts)
+        vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bopts)
+        vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bopts)
+        vim.keymap.set('n', '<space>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, bopts)
+        vim.keymap.set('n', '<C-\\>', vim.lsp.buf.type_definition, bopts)
+        vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bopts)
+        vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bopts)
+        vim.keymap.set('n', '<leader>gr', '<cmd>Telescope lsp_references<CR>', bopts)
+        vim.keymap.set('n', '<space>f', function()
+            require('conform').format({ lsp_format = 'fallback', async = false })
+        end, bopts)
 
--- gopls config
-lspconfig.gopls.setup {
+        -- Inlay hints: on by default where supported, toggle with <space>ih
+        if client and client:supports_method('textDocument/inlayHint') then
+            pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+        end
+        vim.keymap.set('n', '<space>ih', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+        end, bopts)
+
+        -- Let basedpyright own hover; ruff is just for lint/diagnostics
+        if client and client.name == 'ruff' then
+            client.server_capabilities.hoverProvider = false
+        end
+    end,
+})
+
+-- Formatting: conform runs Prettier / ruff where configured, falls back to the
+-- LSP formatter (e.g. gopls, lua_ls) otherwise. Format on save.
+require('conform').setup({
+    format_on_save = { lsp_format = 'fallback', timeout_ms = 2000 },
+    formatters_by_ft = {
+        python = { "ruff_organize_imports", "ruff_format" },
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        json = { "prettier" },
+        jsonc = { "prettier" },
+        css = { "prettier" },
+        scss = { "prettier" },
+        html = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
+        -- go, lua, sh, etc. fall back to their LSP formatter
+    },
+})
+
+-- ---------------------------------------------------------------------------
+-- Language servers (native vim.lsp.config / vim.lsp.enable, Neovim 0.11+).
+-- nvim-lspconfig still provides each server's sane defaults; we only override.
+-- ---------------------------------------------------------------------------
+
+-- Shared defaults for every server
+vim.lsp.config('*', { capabilities = capabilities })
+
+-- Go
+vim.lsp.config('gopls', {
     cmd = { "gopls", "-remote=auto" },
-    on_attach = on_attach,
-    capabilities = capabilities,
+    -- Root at the nearest service/module rather than the monorepo top, which
+    -- would try to ingest far too much code.
+    root_markers = { "go.mod", "main.go", "README.md", "LICENSE" },
     settings = {
         gopls = {
             analyses = {
-                -- These are the only analyzers that are disabled by default in
-                -- gopls.
                 fieldalignment = true,
                 nilness = true,
                 shadow = true,
@@ -142,59 +186,89 @@ lspconfig.gopls.setup {
             },
             staticcheck = true,
             expandWorkspaceToModule = false,
+            hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+            },
         },
     },
-
-    -- Treat anything containing these files as a root directory. This prevents
-    -- us ascending too far toward the root of the repository, which stops us
-    -- from trying to ingest too much code.
-    root_dir = lspconfig.util.root_pattern("go.mod", "main.go", "README.md", "LICENSE"),
-
-    -- Never use wearedev as a root path. It'll grind your machine to a halt.
-    ignoredRootPaths = { "$HOME/src/github.com/monzo/wearedev/" },
-
-    -- Collect less information about packages without open files.
-    memoryMode = "DegradeClosed",
-
     flags = {
-        -- gopls is a particularly slow language server, especially in wearedev.
-        -- Debounce text changes so that we don't send loads of updates.
         debounce_text_changes = 150,
     },
-}
+})
 
--- Lua language server config
-lspconfig.lua_ls.setup {
-    cmd = { "lua-language-server" },
-    on_attach = on_attach,
-    capabilities = capabilities,
+-- Python: basedpyright for types, ruff for linting
+vim.lsp.config('basedpyright', {
     settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT',
-                -- Setup your lua path
-                path = vim.split(package.path, ';'),
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim' },
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
+        basedpyright = {
+            analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = "openFilesOnly",
             },
         },
     },
-}
+})
+vim.lsp.config('ruff', {})
 
--- suppress error messages from lang servers
+-- Lua (for editing this config)
+vim.lsp.config('lua_ls', {
+    settings = {
+        Lua = {
+            runtime = { version = 'LuaJIT' },
+            diagnostics = { globals = { 'vim' } },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false,
+            },
+            hint = { enable = true },
+            telemetry = { enable = false },
+        },
+    },
+})
+
+-- JSON with SchemaStore schemas (package.json, tsconfig, etc.)
+vim.lsp.config('jsonls', {
+    settings = {
+        json = {
+            schemas = schemastore.json.schemas(),
+            validate = { enable = true },
+        },
+    },
+})
+
+-- YAML with SchemaStore schemas (GitHub Actions, k8s, etc.)
+vim.lsp.config('yamlls', {
+    settings = {
+        yaml = {
+            schemaStore = { enable = false, url = "" },
+            schemas = schemastore.yaml.schemas(),
+        },
+    },
+})
+
+vim.lsp.enable({
+    "gopls",
+    "basedpyright",
+    "ruff",
+    "vtsls",
+    "html",
+    "cssls",
+    "jsonls",
+    "eslint",
+    "yamlls",
+    "lua_ls",
+    "bashls",
+})
+
+-- Suppress noisy "exit code" notifications from language servers
 vim.notify = function(msg, log_level, _)
-    if msg:match("exit code") then
+    if type(msg) == "string" and msg:match("exit code") then
         return
     end
     if log_level == vim.log.levels.ERROR then
